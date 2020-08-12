@@ -1,32 +1,50 @@
 #!/bin/bash -x
    #echo "Welcome To Flip Coin Problem"
-
-declare -A flipCheck
-declare -A flipCheckSinglet
-declare -A percentSingletDictionary
-
 isHead=1
-for((i=1;i<=70;i++))
+isTail=0
+count_HH=0
+count_HT=0
+
+count_TH=0
+count_TT=0
+
+declare -A flippingCoin
+declare -A percentageDoublet
+
+for((i=1;i<=50;i++))
 do
-	flipCheck=$((RANDOM%2))
-	if [ $flipCheck -eq $isHead ]
+flipCheck1=$((RANDOM%2))
+	flipCheck2=$((RANDOM%2))
+
+	if [[ $flipCheck1 -eq $isHead && $flipCheck2 -eq $isHead ]]
 	then
-		countHead=$((countHead + 1))
+		count_HH=$((count_HH + 1))
+	elif  [[ $flipCheck1 -eq $isHead && $flipCheck2 -eq $isTail ]]
+        then
+                count_HT=$((count_HT + 1))
+	elif [[ $flipCheck1 -eq $isTail && $flipCheck2 -eq $isHead ]]
+        then
+                count_TH=$((count_TH + 1))
 	else
-                countTail=$((countTail + 1))
+ 		count_TT=$((count_TT + 1))
 	fi
 done
+flippingCoin[H H]=$count_HH
 
-flipCheck[Head]=$countHead
-flipCheckSinglet[Head]=$countHead
+flippingCoin[H T]=$count_HT
 
-flipCheck[Tail]=$countTail
-flipCheckSinglet[Tail]=$countTail
-echo "Head is :${flipCheck[Head]}"
-echo "Head is :${flipCheckSinglet[Head]}"
-echo "Tail :${flipCheck[Tail]}"
-echo "Tail :${flipCheckSinglet[Tail]}"
-echo "Percentage of getting Head : "`awk "BEGIN {print ($countHead/20)*100 }"`
-echo "Percentage of getting Tail : "`awk "BEGIN {print ($countTail/20)*100 }"`
-percentSingletDictionary[Head]=`awk "BEGIN {print ($countHead/20)*100 }"`
-percentSingletDictionary[Tail]=`awk "BEGIN {print ($countTail/20)*100 }"`
+flippingCoin[T H]=$count_TH
+flippingCoin[T T]=$count_TT
+for i in "${!flippingCoin[@]}"
+do
+	echo "$i:${flippingCoin[$i]}"
+done
+echo "Percentage of getting Head Head: "`awk "BEGIN {print ($count_HH/20)*100 }"`
+echo "Percentage of getting Head Tail: "`awk "BEGIN {print ($count_HT/20)*100 }"`
+echo "Percentage of getting Tail Head: "`awk "BEGIN {print ($count_TH/20)*100 }"`
+echo "Percentage of getting Tail Tail: "`awk "BEGIN {print ($count_TT/20)*100 }"`
+
+percentageDoublet[Head Head]=`awk "BEGIN {print ($count_HH/20)*100 }"`
+percentageDoublet[Head Tail]=`awk "BEGIN {print ($count_HT/20)*100 }"`
+percentageDoublet[Tail Head]=`awk "BEGIN {print ($count_TH/20)*100 }"`
+percentageDoublet[Tail Tail]=`awk "BEGIN {print ($count_TT/20)*100 }"`
